@@ -15,11 +15,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index_route(params={}):
+    sort = 'newest'
     q = 'ben+ratliff'
-    url = '{root}?q={query}&api-key={key}'.format(
+    url = '{root}?q={query}&api-key={key}&sort={sort}'.format(
         root = C['API_ROOT'],
         query = q,
-        key = ARTICLES_API_KEY
+        sort = sort,
+        key = ARTICLES_API_KEY,
     )
 
     r = requests.get(url)
