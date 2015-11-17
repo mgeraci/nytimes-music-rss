@@ -3,6 +3,7 @@ from flask import render_template
 from flask import jsonify
 from flask import Response
 import requests
+import json
 
 # constants
 from constants import C
@@ -24,8 +25,20 @@ def index_route(params={}):
         key = ARTICLES_API_KEY,
     )
 
-    r = requests.get(url)
-    return Response(r.text, mimetype='text/json')
+    r = json.loads(requests.get(url).text)
+    r = format_response(r['response']['docs'])
+    return str(r)
+
+def format_response(articles):
+    res = []
+
+    for article in articles:
+        o = {}
+        o['title'] = article['headline']['main']
+
+        res.append(o)
+
+    return res
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
