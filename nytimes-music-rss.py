@@ -2,8 +2,9 @@ from flask import Flask
 from flask import render_template
 from flask import jsonify
 from flask import Response
+import datetime
+import time
 import requests
-import json
 
 # constants
 from constants import C
@@ -27,7 +28,7 @@ def index_route(params={}):
 
     for i, query in enumerate(queries):
         url = generate_url(query)
-        res = json.loads(requests.get(url).text)
+        res = requests.get(url).json()
         res = format_response(res['response']['docs'])
         results[i] = res
 
@@ -54,10 +55,21 @@ def format_response(articles):
         o = {}
         o['title'] = article['headline']['main']
 
-        if article['byline'] != None:
+        try:
             o['author'] = article['byline']['original']
 
-        res.append(o)
+        except Exception:
+            o['author'] = None
+
+        # add the publication date as a python timestamp
+        # example input: 2015-11-08T00:00:00Z
+        try:
+            time_format = "%Y-%m-%dT%XZ"
+            o['date'] = datetime.datetime.strptime(article['pub_date'], time_format)
+            res.append(o)
+
+        except KeyError:
+            continue
 
     return res
 
