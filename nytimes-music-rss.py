@@ -22,17 +22,15 @@ app = Flask(__name__)
 @app.route('/')
 def index_route(params={}):
     queries = ['ben+ratliff', 'jon+pareles']
-
-    # make an array of the size of the number of queries, defaulting to None
-    results = [None for i in range(len(queries))]
+    results = []
 
     for i, query in enumerate(queries):
         url = generate_url(query)
         res = requests.get(url).json()
         res = format_response(res['response']['docs'])
-        results[i] = res
+        results.append(res)
 
-    return str(results)
+    return jsonify(**{ 'articles': results })
 
 
 # helpers
