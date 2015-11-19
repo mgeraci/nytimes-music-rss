@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import jsonify
 from flask import Response
+from operator import itemgetter
 import datetime
 import time
 import requests
@@ -22,15 +23,24 @@ app = Flask(__name__)
 @app.route('/')
 def index_route(params={}):
     queries = ['ben+ratliff', 'jon+pareles']
-    results = []
+    query_results = []
+    articles = []
 
+    # for each query, execute a request and add the results to the results list
     for i, query in enumerate(queries):
         url = generate_url(query)
         res = requests.get(url).json()
         res = format_response(res['response']['docs'])
-        results.append(res)
+        query_results.append(res)
 
-    return jsonify(**{ 'articles': results })
+    # add each article to the articles list
+    for query_result in query_results:
+        for article in query_result:
+            articles.append(article)
+
+    articles = sorted(articles, key=itemgetter('date'), reverse=True)
+
+    return jsonify(**{ 'articles': articles })
 
 
 # helpers
@@ -51,13 +61,22 @@ def format_response(articles):
 
     for article in articles:
         o = {}
-        o['title'] = article['headline']['main']
+        o['url'] = article['web_url']
+        o['lead_paragraph'] = article['lead_paragraph']
 
         try:
             o['author'] = article['byline']['original']
 
+        # if there is no author, don't add this article
         except Exception:
-            o['author'] = None
+            continue
+
+        # grab the title from the headline, if it's there
+        try:
+            o['title'] = article['headline']['main']
+
+        except Exception:
+            pass
 
         # add the publication date as a python timestamp
         # example input: 2015-11-08T00:00:00Z
