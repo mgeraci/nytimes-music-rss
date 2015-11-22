@@ -6,7 +6,7 @@ single RSS feed.
 Assuming that you already have pip, virtualenv, and virtualenvwrapper installed:
 
 * clone the repo
-* get an API key for the (NYTimes Articles API)['http://developer.nytimes.com']
+* get an API key for the [NYTimes Articles API]('http://developer.nytimes.com')
 * create a file in the project root called `localsettings.py` and add your api
   key to it with `ARTICLES_API_KEY = "your key here"`
 * `mkvirtualenv nytimes_music_rss`
@@ -20,4 +20,4 @@ feed.
 ## Modifying the search
 The queries that run are enumerated in a list in the file `constants.py`. The
 filters that pare down the results of all those	queries is the function
-`filter_articles` in (the main python file)['https://github.com/mgeraci/nytimes-music-rss/blob/master/nytimes_music_rss.py'].
+`filter_articles` in [the main python file]('https://github.com/mgeraci/nytimes-music-rss/blob/master/nytimes_music_rss.py').
