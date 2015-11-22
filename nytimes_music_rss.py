@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index_route(params={}):
-    queries = ['ben+ratliff', 'jon+pareles']
+    queries = ['ben+ratliff', 'jon+pareles', 'jon+caramanica', 'nate+chinen']
     query_results = []
     articles = []
 
