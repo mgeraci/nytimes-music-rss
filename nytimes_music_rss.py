@@ -13,7 +13,6 @@ from constants import C
 
 # secret settings
 from localsettings import ARTICLES_API_KEY
-from localsettings import EVENTS_API_KEY
 
 app = Flask(__name__)
 
@@ -23,12 +22,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def index_route(params={}):
-    queries = ['ben+ratliff', 'jon+pareles', 'jon+caramanica', 'nate+chinen']
     query_results = []
     articles = []
 
     # for each query, execute a request and add the results to the results list
-    for i, query in enumerate(queries):
+    for i, query in enumerate(C['QUERIES']):
         url = generate_url(query)
         res = requests.get(url).json()
         res = format_response(res['response']['docs'])
