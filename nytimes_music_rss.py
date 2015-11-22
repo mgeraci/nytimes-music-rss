@@ -40,7 +40,10 @@ def index_route(params={}):
 
     articles.sort(key=itemgetter('date'), reverse=True)
 
-    return jsonify(**{ 'articles': articles })
+    #return jsonify(**{ 'articles': articles })
+    return render_template('index.xml', params = {
+        'articles': articles
+    })
 
 
 # helpers

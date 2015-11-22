@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rss version="2.0">
+	<channel>
+		<title>NYTimes Music Reviews</title>
+		<link>http://nytimes-rss.michaelgeraci.com/</link>
+		<description>An RSS feed of music reviews published by the New York Times.</description>
+
+		{% for article in params.articles %}
+			<item>
+				<title>{{ article.title }}</title>
+				<author>{{ article.author }}</author>
+				<description>{{ article.lead_paragraph }}</description>
+				<link>{{ article.url }}</link>
+				<pubDate>{{ article.date }}</pubDate>
+			</item>
+		{% endfor %}
+
+	</channel>
+</rss>
