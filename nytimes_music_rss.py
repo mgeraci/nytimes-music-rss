@@ -6,6 +6,7 @@ from operator import itemgetter
 import datetime
 import time
 import requests
+import re
 
 # constants
 from constants import C
@@ -38,6 +39,7 @@ def index_route(params={}):
         for article in query_result:
             articles.append(article)
 
+    articles = filter_articles(articles)
     articles.sort(key=itemgetter('date'), reverse=True)
 
     #return jsonify(**{ 'articles': articles })
@@ -92,6 +94,27 @@ def format_response(articles):
             continue
 
         res.append(o)
+
+    return res
+
+def filter_articles(articles):
+    res = []
+
+    for article in articles:
+        # skip spanish language articles
+        if article['author'].find('Por') == 0:
+            continue
+
+        # skip popcasts
+        if article['title'].find('Popcast') == 0:
+            continue
+
+        # only add articles in the arts/music section
+        matches = re.search(r"\d{4}/\d{2}\/\d{2}\/arts\/music", article['url'])
+        if matches == None:
+            continue
+
+        res.append(article)
 
     return res
 
