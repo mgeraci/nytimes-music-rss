@@ -33,12 +33,12 @@ def index_route(params={}):
         res = format_response(res['response']['docs'])
         query_results.append(res)
 
-    # add each article to the articles list
+    # add each article in each result to the main articles list
     for query_result in query_results:
         for article in query_result:
             articles.append(article)
 
-    articles = sorted(articles, key=itemgetter('date'), reverse=True)
+    articles.sort(key=itemgetter('date'), reverse=True)
 
     return jsonify(**{ 'articles': articles })
 
@@ -67,7 +67,8 @@ def format_response(articles):
         try:
             o['author'] = article['byline']['original']
 
-        # if there is no author, don't add this article
+        # if there is no author, don't add this article (event listing articles
+        # often don't have an author)
         except Exception:
             continue
 
@@ -78,15 +79,16 @@ def format_response(articles):
         except Exception:
             pass
 
-        # add the publication date as a python timestamp
-        # example input: 2015-11-08T00:00:00Z
+        # add the publication date as a python timestamp. but if there isn't a
+        # date, don't add the article. example input: 2015-11-08T00:00:00Z
         try:
             time_format = "%Y-%m-%dT%XZ"
             o['date'] = datetime.datetime.strptime(article['pub_date'], time_format)
-            res.append(o)
 
         except KeyError:
             continue
+
+        res.append(o)
 
     return res
 
