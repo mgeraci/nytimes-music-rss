@@ -1,5 +1,5 @@
 # NY Times Music RSS
-This is a simple app which combines a few queries from the NY Times api into a
+This is a simple python/flask app which combines a few queries from the NY Times api into a
 single RSS feed.
 
 ## Installation
@@ -12,7 +12,7 @@ Assuming that you already have pip, virtualenv, and virtualenvwrapper installed:
 * `mkvirtualenv nytimes_music_rss`
 * `workon nytimes_music_rss`
 * `pip install -r requirements.txt`
-* `python nytimes_music_rss.txt`
+* `python nytimes_music_rss.py`
 
 Then you should be able to load `localhost:5000` and see the XML of the RSS
 feed.
