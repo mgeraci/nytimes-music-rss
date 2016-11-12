@@ -8,8 +8,13 @@ import time
 import requests
 import re
 
+
 # constants
 from constants import C
+
+# the times api has a rate limit of 5 seconds between requests. this gets
+# passed to `time.sleep()` below, which takes seconds
+RATE_LIMIT = 5
 
 # secret settings
 from localsettings import ARTICLES_API_KEY
@@ -18,7 +23,7 @@ app = Flask(__name__)
 
 
 # routes
-###############################################################################
+# -----------------------------------------------------------------------------
 
 @app.route('/')
 def index_route(params={}):
@@ -28,9 +33,20 @@ def index_route(params={}):
     # for each query, execute a request and add the results to the results list
     for i, query in enumerate(C['QUERIES']):
         url = generate_url(query)
-        res = requests.get(url).json()
-        res = format_response(res['response']['docs'])
-        query_results.append(res)
+        res = requests.get(url)
+
+        try:
+            res = res.json()
+
+        except Exception:
+            time.sleep(RATE_LIMIT)
+            continue
+
+        if res and res['response'] and res['response']['docs']:
+            res = format_response(res['response']['docs'])
+            query_results.append(res)
+
+        time.sleep(RATE_LIMIT)
 
     # add each article in each result to the main articles list
     for query_result in query_results:
@@ -40,14 +56,13 @@ def index_route(params={}):
     articles = filter_articles(articles)
     articles.sort(key=itemgetter('date'), reverse=True)
 
-    #return jsonify(**{ 'articles': articles })
     return render_template('index.xml', params = {
         'articles': articles
     })
 
 
 # helpers
-###############################################################################
+# -----------------------------------------------------------------------------
 
 def generate_url(query):
     sort = 'newest'
@@ -118,7 +133,7 @@ def filter_articles(articles):
 
 
 # init
-###############################################################################
+# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
