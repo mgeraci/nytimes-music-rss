@@ -1,5 +1,5 @@
 # NY Times Music RSS
-This is a simple app which combines a few queries from the NY Times api into a
+This is a simple python/flask app which combines a few queries from the NY Times api into a
 single RSS feed.
 
 ## Installation
