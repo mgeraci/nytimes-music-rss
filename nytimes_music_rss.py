@@ -99,9 +99,18 @@ def format_response(articles):
 
         # add the publication date as a python timestamp. but if there isn't a
         # date, don't add the article. example input: 2015-11-08T00:00:00Z
+        #                                             2016-12-16T20:05:45+0000
         try:
-            time_format = "%Y-%m-%dT%XZ"
-            o['date'] = datetime.datetime.strptime(article['pub_date'], time_format)
+            time_format = "%Y-%m-%dT%H:%M"
+            date = article['pub_date']
+
+            # remove seconds in the SS+0000 format
+            date = re.sub(r":\d{2}\+\d+$", "", date)
+
+            # remove seconds in the :00Z format
+            date = re.sub(r":\d{2}Z$", "", date)
+
+            o['date'] = datetime.datetime.strptime(date, time_format)
 
         except KeyError:
             continue
