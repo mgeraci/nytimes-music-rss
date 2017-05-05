@@ -5,5 +5,6 @@ C = {
         'jon+pareles',
         'jon+caramanica',
         'nate+chinen',
+        'joe+coscarelli',
     ]
 }
