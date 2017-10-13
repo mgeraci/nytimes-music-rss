@@ -79,21 +79,33 @@ def format_response(articles):
 
     for article in articles:
         o = {}
-        o['url'] = article['web_url']
-        o['lead_paragraph'] = article['lead_paragraph']
 
         try:
-            o['author'] = article['byline']['original']
+            o['url'] = article['web_url']
+        except Exception:
+            pass
+
+        try:
+            o['lead_paragraph'] = article['lead_paragraph']
+        except Exception:
+            pass
+
+        if not o.get('lead_paragraph'):
+            try:
+                o['lead_paragraph'] = article['snippet']
+            except Exception:
+                pass
 
         # if there is no author, don't add this article (event listing articles
         # often don't have an author)
+        try:
+            o['author'] = article['byline']['original']
         except Exception:
             continue
 
         # grab the title from the headline, if it's there
         try:
             o['title'] = article['headline']['main']
-
         except Exception:
             pass
 
@@ -111,7 +123,6 @@ def format_response(articles):
             date = re.sub(r":\d{2}Z$", "", date)
 
             o['date'] = datetime.datetime.strptime(date, time_format)
-
         except KeyError:
             continue
 
@@ -124,11 +135,15 @@ def filter_articles(articles):
 
     for article in articles:
         # skip spanish language articles
-        if article['author'].find('Por') == 0:
+        if article['author'] and article['author'].find('Por') == 0:
             continue
 
         # skip popcasts
         if article['title'].find('Popcast') == 0:
+            continue
+
+        # skip The Playlist
+        if article['title'].find('The Playlist') == 0:
             continue
 
         # only add articles in the arts/music section
